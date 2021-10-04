@@ -32,13 +32,13 @@ public:
 	{
 		delete[] arr;
 	}
-	void Print(int i=0)
+	void Print()
 	{
-		for (i = 0; i < size; i++)
+		for (int i = 0; i < size; i++)
 		{
 			cout << i << " - " << arr[i] << endl;
 		}
-	cout << endl;
+		cout << endl;
 	}
 	void SetVal(int i, int val)
 	{
@@ -53,7 +53,7 @@ public:
 	}
 	int GetVal(int i)
 	{
-		if (i < size) 
+		if (i < size && i >=0) 
 		{
 			return arr[i];
 		}
@@ -63,21 +63,19 @@ public:
 		}
 		
 	}
-	void AddVal(const Mass& other, int newval)
+	void AddVal(int newval)
 	{
 		if (newval >= -100 && newval <= 100)
 		{
-			this->size = other.size + 1;
-			if (arr != nullptr)
-			{
-				delete [] this->arr;
-			}
-			arr = new int[this->size];
+			size = size + 1;
+			int* NewArr = new int[size];
 			for (int i = 0; i < size-1; i++)
 			{
-			this->arr[i] = other.arr[i];
+			NewArr[i] =arr[i];
 			}
-			arr[size-1] = newval;
+			
+			NewArr[size-1] = newval;
+			arr = NewArr;
 		}
 		else
 		{
@@ -129,14 +127,14 @@ int main()
 	a.Print();
 	Mass b(a); //copy
 	b.Print();
-	Mass c(1);
-	c.AddVal(a, 100); //add new value to a
-	c.Print();
-	Mass d(3);
-	d.SetVal(1, 10);
-	d.Minus(a);
-	//d.Plus(a);
-	d.Print();
+	a.AddVal(10);
+	a.Print();
+	
+	//Mass d(3);
+	//d.SetVal(1, 10);
+	//d.Minus(a);
+	////d.Plus(a);
+	//d.Print();
 	return 0;
 }
 
