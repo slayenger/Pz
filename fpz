@@ -1,0 +1,223 @@
+#include <iostream>
+#include <exception>
+#include <new>
+using namespace std;
+
+template<typename T>
+class Mass
+{
+private:
+	T* arr;
+	int size;
+
+public:
+
+	Mass();
+	Mass(int size)
+	{
+		try
+		{
+			if (size < 1)
+			{
+				throw bad_alloc();
+			}
+			else
+			{
+				this->size = size;
+				arr = new T[size];
+				for (int i = 0; i < size; i++)
+				{
+					arr[i] = 0;
+				}
+			}
+		}
+		catch (bad_alloc& exception)
+		{
+			cerr << "Memory allocation error" << endl;
+		}
+	}
+	Mass(const Mass& other)
+	{
+		this->size = other.size;
+		arr = new T[size];
+		for (int i = 0; i < size; i++)
+		{
+			this->arr[i] = other.arr[i];
+		}
+	}
+	~Mass()
+	{
+		delete[] arr;
+	}
+	void Print()
+	{
+		for (int i = 0; i < size; i++)
+		{
+			cout << i << " - " << arr[i] << endl;
+		}
+		cout << endl;
+	}
+	void SetVal(int i, T val)
+	{
+		if (typeid(T) == typeid(int))
+		{
+			try
+			{
+				if (i >= size || i < 0)
+				{
+					throw out_of_range("Index error");
+				}
+				if (val > 100 || val < -100)
+				{
+					throw invalid_argument("value outside the range -100..100");
+				}
+				else
+				{
+					arr[i] = val;
+				}
+			}
+			catch (out_of_range& exception)
+			{
+				cerr << exception.what() << endl;
+				exit(1);
+			}
+			catch (invalid_argument& exception)
+			{
+				cerr << exception.what() << endl;
+				exit(1);
+			}
+		}
+		else
+		{
+			exit(1);
+		}
+
+	}
+	int GetVal(int i)
+	{
+		try
+		{
+			if (i >= size || i < 0)
+			{
+				throw out_of_range("Index error");
+			}
+			else
+			{
+				return arr[i];
+			}
+		}
+		catch (out_of_range& exception)
+		{
+			cerr << exception.what() << endl;
+			exit(1);
+		}
+
+	}
+	void AddVal(T newval)
+	{
+		try
+		{
+			if (newval > 100 || newval < -100)
+			{
+				throw invalid_argument("value outside the range - 100..100");
+			}
+			else
+			{
+				size = size + 1;
+				int* NewArr = new T[size];
+				for (int i = 0; i < size - 1; i++)
+				{
+					NewArr[i] = arr[i];
+				}
+				delete[] arr;
+				NewArr[size - 1] = newval;
+				arr = NewArr;
+			}
+		}
+		catch (invalid_argument& exception)
+		{
+			cerr << exception.what() << endl;
+			exit(1);
+		}
+
+
+	}
+	void GetArrSize()
+	{
+		return size;
+	}
+	void Plus(Mass& other)
+	{
+		if (size <= other.size)
+		{
+			for (int i = 0; i < size; i++)
+			{
+				arr[i] += other.arr[i];
+			}
+		}
+		else
+		{
+			for (int i = 0; i < other.size; i++)
+			{
+				arr[i] += other.arr[i];
+			}
+		}
+	}
+	void Minus(Mass& other)
+	{
+		if (size <= other.size)
+		{
+			for (int i = 0; i < size; i++)
+			{
+				arr[i] -= other.arr[i];
+			}
+		}
+		else
+		{
+			for (int i = 0; i < other.size; i++)
+			{
+				arr[i] -= other.arr[i];
+			}
+		}
+	}
+	void operator = (Mass& other)
+	{
+		if (size > other.size)
+		{
+			for (int i = 0; i < other.size; i++)
+			{
+				arr[i] = other.arr[i];
+			}
+		}
+		else
+		{
+			for (int i = 0; i < size; i++)
+				arr[i] = other.arr[i];
+		}
+	}
+};
+template<typename T>
+ostream& operator << (ostream& os, Mass <T>& array)
+{
+	for (int i = 0; i < 3; i++)
+	{
+		os << array.AddVal(i);
+	}
+	return os;
+}
+
+
+int main()
+{
+	Mass<int> a(2);
+	a.SetVal(1, 5);
+	a.SetVal(0, 4);
+	Mass<int> b(3);
+	Mass<int> c(a);
+	b=a;
+	a.Print();
+	b.Print();
+	cout << b << endl;;
+	return 0;
+}
+
