@@ -83,7 +83,14 @@ public:
 		}
 		else
 		{
-			throw logic_error("Wrong data type");
+			if (i >= size || i < 0)
+			{
+				throw out_of_range("Index error");
+			}
+			else
+			{
+				arr[i] = val;
+			}
 		}
 
 	}
