@@ -65,33 +65,24 @@ public:
 	}
 	void SetVal(int i, T val)
 	{
+
 		if (typeid(T) == typeid(int))
 		{
-			
-				if (i >= size || i < 0)
-				{
-					throw out_of_range("Index error");
-				}
 				if (val > 100 || val < -100)
 				{
 					throw invalid_argument("value outside the range -100..100");
 				}
-				else
-				{
-					arr[i] = val;
-				}		
+		}
+			
+		if (i >= size || i < 0)
+		{
+			throw out_of_range("Index error");
 		}
 		else
 		{
-			if (i >= size || i < 0)
-			{
-				throw out_of_range("Index error");
-			}
-			else
-			{
-				arr[i] = val;
-			}
+			arr[i] = val;
 		}
+		
 
 	}
 	int GetVal(int i)
