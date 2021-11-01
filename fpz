@@ -15,31 +15,37 @@ public:
 	Mass();
 	Mass(int size)
 	{
-		try
-		{
-			if (size < 1)
+
+			if (size < 0)
 			{
-				throw bad_alloc();
+				throw out_of_range("Index error");
 			}
 			else
 			{
 				this->size = size;
 				arr = new T[size];
-				for (int i = 0; i < size; i++)
+				if (!arr)
 				{
-					arr[i] = 0;
+					throw bad_alloc();
 				}
+				if (typeid(T) == typeid(int))
+				{
+				for (int i = 0; i < size; i++)
+					{
+						arr[i] = 0;
+					}
+				}
+				
 			}
-		}
-		catch (bad_alloc& exception)
-		{
-			cerr << "Memory allocation error" << endl;
-		}
 	}
 	Mass(const Mass& other)
 	{
 		this->size = other.size;
 		arr = new T[size];
+		if (!arr)
+		{
+			throw bad_alloc();
+		}
 		for (int i = 0; i < size; i++)
 		{
 			this->arr[i] = other.arr[i];
@@ -61,8 +67,7 @@ public:
 	{
 		if (typeid(T) == typeid(int))
 		{
-			try
-			{
+			
 				if (i >= size || i < 0)
 				{
 					throw out_of_range("Index error");
@@ -74,29 +79,16 @@ public:
 				else
 				{
 					arr[i] = val;
-				}
-			}
-			catch (out_of_range& exception)
-			{
-				cerr << exception.what() << endl;
-				exit(1);
-			}
-			catch (invalid_argument& exception)
-			{
-				cerr << exception.what() << endl;
-				exit(1);
-			}
+				}		
 		}
 		else
 		{
-			exit(1);
+			throw logic_error("Wrong data type");
 		}
 
 	}
 	int GetVal(int i)
-	{
-		try
-		{
+	{		
 			if (i >= size || i < 0)
 			{
 				throw out_of_range("Index error");
@@ -105,42 +97,36 @@ public:
 			{
 				return arr[i];
 			}
-		}
-		catch (out_of_range& exception)
-		{
-			cerr << exception.what() << endl;
-			exit(1);
-		}
-
 	}
 	void AddVal(T newval)
 	{
-		try
+		if (typeid(T) == typeid(int))
 		{
-			if (newval > 100 || newval < -100)
-			{
-				throw invalid_argument("value outside the range - 100..100");
-			}
-			else
-			{
-				size = size + 1;
-				int* NewArr = new T[size];
-				for (int i = 0; i < size - 1; i++)
-				{
-					NewArr[i] = arr[i];
-				}
-				delete[] arr;
-				NewArr[size - 1] = newval;
-				arr = NewArr;
-			}
+					if (newval > 100 || newval < -100)
+					{
+						throw invalid_argument("value outside the range - 100..100");
+					}
+					else
+					{
+						size = size + 1;
+						int* NewArr = new T[size];
+						if (!NewArr)
+						{
+							throw bad_alloc();
+						}
+						for (int i = 0; i < size - 1; i++)
+						{
+							NewArr[i] = arr[i];
+						}
+						delete[] arr;
+						NewArr[size - 1] = newval;
+						arr = NewArr;
+					}
 		}
-		catch (invalid_argument& exception)
+		else
 		{
-			cerr << exception.what() << endl;
-			exit(1);
+			throw logic_error("Wrong data type");
 		}
-
-
 	}
 	void GetArrSize()
 	{
@@ -224,9 +210,33 @@ int main()
 	Mass<int> a(2);
 	a.SetVal(1, 5);
 	a.SetVal(0, 4);
+	try
+	{
+		Mass<int> arr(3);
+		arr.SetVal(0, 2);
+	}
+	catch (out_of_range exception)
+	{
+		cout << "An exception was thrown " << exception.what() << endl;
+	}
+	catch (bad_alloc exception) {
+		cout << "An exception was thrown " << exception.what() << endl;
+	}
+	catch (invalid_argument exception) {
+		cout << "An exception was thrown " << exception.what() << endl;
+	}
 	Mass<int> b(3);
-	Mass<int> c(a);
 	b=a;
+	Mass <int> c(5);
+	Mass <int> d(5);
+	try
+	{
+		c.GetDistance(d);
+	}
+	catch (logic_error exception)
+	{
+		cout << "An exception was thrown " << exception.what() << endl;
+	}
 	a.Print();
 	b.Print();
 	cout << b << endl;;
